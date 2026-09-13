@@ -1,0 +1,54 @@
+version: "3.9"
+
+networks:
+  bodega-net:
+    driver: bridge
+
+services:
+  inventario-api:
+    build: ./inventario-api
+    container_name: inventario-api
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./inventario-api/.env
+    networks:
+      - bodega-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  ventas-api:
+    build: ./ventas-api
+    container_name: ventas-api
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./ventas-api/.env
+    networks:
+      - bodega-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  proveedores-api:
+    build: ./proveedores-api
+    container_name: proveedores-api
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./proveedores-api/.env
+    networks:
+      - bodega-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
