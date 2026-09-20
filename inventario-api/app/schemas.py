@@ -3,7 +3,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class TipoMovimientoEnum(str, Enum):
@@ -13,13 +13,13 @@ class TipoMovimientoEnum(str, Enum):
 
 
 class ProductoCreate(BaseModel):
-    sku: str
-    nombre: str
+    sku: str = Field(min_length=1, max_length=50)
+    nombre: str = Field(min_length=1, max_length=150)
     categoria: Optional[str] = None
     unidad_medida: Optional[str] = "unidad"
-    stock_actual: int = 0
-    stock_minimo: int = 0
-    precio_unitario: Decimal = Decimal("0.00")
+    stock_actual: int = Field(default=0, ge=0)
+    stock_minimo: int = Field(default=0, ge=0)
+    precio_unitario: Decimal = Field(default=Decimal("0.00"), ge=0)
 
 
 class ProductoUpdate(BaseModel):
@@ -61,9 +61,21 @@ class StockOut(BaseModel):
 class MovimientoCreate(BaseModel):
     producto_id: int
     tipo_movimiento: TipoMovimientoEnum
-    cantidad: int = Field(gt=0, description="Cantidad del movimiento, siempre positiva")
+    cantidad: int = Field(
+        ge=0,
+        description=(
+            "Entrada/salida: cantidad a mover (> 0). "
+            "Ajuste: stock resultante tras el conteo físico (>= 0, admite 0)."
+        ),
+    )
     motivo: Optional[str] = None
     usuario: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _cantidad_positiva_salvo_ajuste(self):
+        if self.tipo_movimiento != TipoMovimientoEnum.ajuste and self.cantidad <= 0:
+            raise ValueError("cantidad debe ser mayor que 0 para entradas y salidas")
+        return self
 
 
 class MovimientoOut(BaseModel):

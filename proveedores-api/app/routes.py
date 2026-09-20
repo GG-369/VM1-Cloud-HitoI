@@ -75,6 +75,22 @@ def crear_tiempo_entrega(payload: schemas.TiempoEntregaCreate, db: Session = Dep
     _validar_rango_dias(
         payload.dias_entrega_min, payload.dias_entrega_promedio, payload.dias_entrega_max
     )
+    duplicado = (
+        db.query(models.TiempoEntrega.id)
+        .filter(
+            models.TiempoEntrega.proveedor_id == payload.proveedor_id,
+            models.TiempoEntrega.producto_id == payload.producto_id,
+        )
+        .first()
+    )
+    if duplicado:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Ya existe un tiempo de entrega para este proveedor y producto "
+                f"(id {duplicado.id}); actualízalo con PATCH"
+            ),
+        )
 
     tiempo = models.TiempoEntrega(**payload.model_dump())
     db.add(tiempo)

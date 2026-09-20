@@ -48,9 +48,17 @@ public class PedidoProveedorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
-    @GetMapping("/{productoId}")
+    @GetMapping("/producto/{productoId}")
     @Operation(summary = "Historial de pedidos a proveedor de un producto")
     public ResponseEntity<List<PedidoProveedor>> historialPorProducto(@PathVariable Integer productoId) {
+        return ResponseEntity.ok(pedidoProveedorRepository.findByProductoIdOrderByFechaPedidoDesc(productoId));
+    }
+
+    // Ruta antigua, se mantiene por compatibilidad con clientes existentes. Usar "/producto/{productoId}".
+    @GetMapping("/{productoId}")
+    @Deprecated
+    @Operation(summary = "[Obsoleto] Use /producto/{productoId}", deprecated = true)
+    public ResponseEntity<List<PedidoProveedor>> historialPorProductoLegacy(@PathVariable Integer productoId) {
         return ResponseEntity.ok(pedidoProveedorRepository.findByProductoIdOrderByFechaPedidoDesc(productoId));
     }
 
@@ -81,7 +89,7 @@ public class PedidoProveedorController {
         return ResponseEntity.ok(pedidoProveedorRepository.findAll(filtros, pagina).getContent());
     }
 
-    // "/{productoId}" ya devuelve el historial por producto, por eso el detalle por id vive en "/detalle/{id}".
+    // "/{productoId}" (obsoleta) aún devuelve el historial por producto, por eso el detalle por id vive en "/detalle/{id}".
     @GetMapping("/detalle/{id}")
     @Operation(summary = "Detalle de un pedido a proveedor por su id")
     public ResponseEntity<PedidoProveedor> obtenerPedido(@PathVariable Long id) {

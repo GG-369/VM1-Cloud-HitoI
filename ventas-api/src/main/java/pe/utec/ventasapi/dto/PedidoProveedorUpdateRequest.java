@@ -1,7 +1,7 @@
 package pe.utec.ventasapi.dto;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 /** Actualización parcial: los campos nulos (o ausentes) no se modifican. */
@@ -16,7 +16,8 @@ public class PedidoProveedorUpdateRequest {
     @Min(1)
     private Integer cantidadPedida;
 
-    @Size(min = 1, max = 20)
+    @Pattern(regexp = "pendiente|en_transito|recibido|cancelado",
+            message = "estado debe ser: pendiente, en_transito, recibido o cancelado")
     private String estado;
 
     private LocalDate fechaEstimadaEntrega;

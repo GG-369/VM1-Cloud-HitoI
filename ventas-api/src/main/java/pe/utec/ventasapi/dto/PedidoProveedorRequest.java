@@ -2,6 +2,7 @@ package pe.utec.ventasapi.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public class PedidoProveedorRequest {
@@ -19,6 +20,8 @@ public class PedidoProveedorRequest {
     @Min(1)
     private Integer cantidadPedida;
 
+    @Pattern(regexp = "pendiente|en_transito|recibido|cancelado",
+            message = "estado debe ser: pendiente, en_transito, recibido o cancelado")
     private String estado;
 
     private LocalDate fechaEstimadaEntrega;
