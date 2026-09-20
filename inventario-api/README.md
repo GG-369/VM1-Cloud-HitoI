@@ -9,8 +9,12 @@ Microservicio de Inventario. Python + FastAPI + SQLAlchemy, MySQL (`inventario_d
 | POST | `/api/inventario/productos` | Crea un producto |
 | GET | `/api/inventario/productos` | Lista productos (paginado: `skip`, `limit`) |
 | GET | `/api/inventario/productos/{id}` | Detalle de un producto |
+| PATCH | `/api/inventario/productos/{id}` | Actualiza parcialmente un producto (no edita el stock; 409 si el SKU ya existe) |
+| DELETE | `/api/inventario/productos/{id}` | Elimina un producto (409 si tiene movimientos registrados) |
 | GET | `/api/inventario/stock/{producto_id}` | Stock actual y mínimo de un producto |
 | POST | `/api/inventario/movimientos` | Registra un movimiento (entrada/salida/ajuste) y actualiza el stock de forma transaccional |
+| GET | `/api/inventario/movimientos` | Lista movimientos (filtros: `producto_id`, `tipo_movimiento`; paginado) |
+| GET | `/api/inventario/movimientos/{id}` | Detalle de un movimiento |
 | GET | `/health` | Healthcheck |
 
 ## Documentación interactiva

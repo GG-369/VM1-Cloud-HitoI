@@ -34,6 +34,15 @@ public class VentaDiaria {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        calcularTotal();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        calcularTotal();
+    }
+
+    private void calcularTotal() {
         if (this.precioUnitario != null && this.cantidadVendida != null) {
             this.total = this.precioUnitario.multiply(BigDecimal.valueOf(this.cantidadVendida));
         }

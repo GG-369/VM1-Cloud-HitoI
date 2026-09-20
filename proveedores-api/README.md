@@ -7,9 +7,15 @@ Microservicio de Proveedores. Python + FastAPI + SQLAlchemy, MySQL (`proveedores
 | Método | Ruta | Descripción |
 |---|---|---|
 | POST | `/api/proveedores` | Crea un proveedor |
-| GET | `/api/proveedores` | Lista proveedores |
+| GET | `/api/proveedores` | Lista proveedores (paginado: `skip`, `limit`) |
 | GET | `/api/proveedores/{id}` | Detalle de un proveedor |
-| POST | `/api/proveedores/tiempos-entrega` | Registra un tiempo de entrega proveedor↔producto |
+| PATCH | `/api/proveedores/{id}` | Actualiza parcialmente un proveedor |
+| DELETE | `/api/proveedores/{id}` | Elimina un proveedor (409 si tiene tiempos de entrega registrados) |
+| POST | `/api/proveedores/tiempos-entrega` | Registra un tiempo de entrega proveedor↔producto (exige `min <= promedio <= max`) |
+| GET | `/api/proveedores/tiempos-entrega` | Lista tiempos de entrega (filtros: `proveedor_id`, `producto_id`; paginado) |
+| GET | `/api/proveedores/tiempos-entrega/{id}` | Detalle de un tiempo de entrega |
+| PATCH | `/api/proveedores/tiempos-entrega/{id}` | Actualiza parcialmente un tiempo de entrega |
+| DELETE | `/api/proveedores/tiempos-entrega/{id}` | Elimina un tiempo de entrega |
 | GET | `/api/proveedores/producto/{producto_id}/tiempo-entrega` | Tiempo de entrega (mejor proveedor disponible) para un producto — usado por `prediccion-api` y `alertas-api` |
 | GET | `/health` | Healthcheck |
 

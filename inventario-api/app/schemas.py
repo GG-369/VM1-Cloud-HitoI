@@ -22,6 +22,17 @@ class ProductoCreate(BaseModel):
     precio_unitario: Decimal = Decimal("0.00")
 
 
+class ProductoUpdate(BaseModel):
+    """Actualización parcial. El stock no se edita aquí: cambia solo vía movimientos."""
+
+    sku: Optional[str] = None
+    nombre: Optional[str] = None
+    categoria: Optional[str] = None
+    unidad_medida: Optional[str] = None
+    stock_minimo: Optional[int] = Field(default=None, ge=0)
+    precio_unitario: Optional[Decimal] = Field(default=None, ge=0)
+
+
 class ProductoOut(BaseModel):
     id: int
     sku: str
